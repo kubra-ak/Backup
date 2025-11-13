@@ -1,3 +1,13 @@
+crontab
+00 03 * * * sh /home/oracle/scripts/delete_Archive.sh
+
+
+
+
+
+
+
+
 . ~/.orcldb.env
 
 /bin/date
