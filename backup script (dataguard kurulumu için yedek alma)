@@ -1,0 +1,19 @@
+. ~/.bash_profile
+
+/bin/date
+
+LOGFILE=/home/oracle/ORCLDB_rman_arc_`date +%Y%m%d`.log
+
+/u02/app/oracle/product/19.0.0.0/dbhome_1/bin/rman target / LOG $LOGFILE << EOF
+
+run {
+ALLOCATE CHANNEL DISK1 DEVICE TYPE DISK FORMAT '/db_backup/THORDR_BCK/ARC_%d_%U_%s_%T.bck';
+ALLOCATE CHANNEL DISK2 DEVICE TYPE DISK FORMAT '/db_backup/THORDR_BCK/ARC_%d_%U_%s_%T.bck';
+ALLOCATE CHANNEL DISK3 DEVICE TYPE DISK FORMAT '/db_backup/THORDR_BCK/ARC_%d_%U_%s_%T.bck';
+ALLOCATE CHANNEL DISK4 DEVICE TYPE DISK FORMAT '/db_backup/THORDR_BCK/ARC_%d_%U_%s_%T.bck';
+backup as backupset archivelog all not backed up 1 times  delete input;
+RELEASE CHANNEL DISK1;
+RELEASE CHANNEL DISK2;
+RELEASE CHANNEL DISK3;
+RELEASE CHANNEL DISK4;
+}
