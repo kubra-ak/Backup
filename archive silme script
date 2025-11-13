@@ -1,0 +1,18 @@
+. ~/.orcldb.env
+
+/bin/date
+
+LOGFILE=/home/oracle/rman_logs/delete_Arc_`date +%Y%m%d`.log
+
+/u02/app/oracle/product/19.0.0.0/dbhome_2/bin/rman target / LOG $LOGFILE << EOF
+
+
+crosscheck backup;
+crosscheck archivelog all;
+delete noprompt expired backup;
+delete noprompt obsolete;
+delete noprompt expired archivelog all;
+delete noprompt archivelog until time 'sysdate-1';
+
+EOF
+/bin/date
