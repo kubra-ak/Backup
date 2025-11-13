@@ -1,0 +1,31 @@
+. ~/.ORCLDB.env
+
+/bin/date
+
+LOGFILE=/home/oracle/rman_logs/rman_lwl1_`date +%Y%m%d`.log
+
+/u02/app/oracle/product/19.0.0.0/dbhome_2/bin/rman target / LOG $LOGFILE << EOF
+
+
+crosscheck backup;
+crosscheck archivelog all;
+delete noprompt expired backup;
+delete noprompt obsolete;
+delete noprompt expired archivelog all;
+
+run
+{
+ALLOCATE CHANNEL DISK1 DEVICE TYPE DISK;
+ALLOCATE CHANNEL DISK2 DEVICE TYPE DISK;
+ALLOCATE CHANNEL DISK3 DEVICE TYPE DISK;
+ALLOCATE CHANNEL DISK4 DEVICE TYPE DISK;
+backup TAG='BLevel1' as backupset incremental level 1 database FORMAT '/backup/orcldb/INC_%d_%u_%s_%T_%U.bck';
+BACKUP CURRENT CONTROLFILE FORMAT '/backup/orcldb/CNTRL_%d_%s_%p_%T_%U.bck';
+backup spfile format '/backup/orcldb/SPFILE_%d_%s_%p_%T_%U.bck';
+RELEASE CHANNEL DISK1;
+RELEASE CHANNEL DISK2;
+RELEASE CHANNEL DISK3;
+RELEASE CHANNEL DISK4;
+}
+EOF
+/bin/date
