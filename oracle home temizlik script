@@ -1,0 +1,18 @@
+00 01 * * * sh /home/oracle/scripts/clear_oracle_home.sh
+
+. ~/.orcldb.env
+AGE1DAYS=1440
+AGE7DAYS=10080
+AGE10DAYS=14400
+AGE15DAYS=21600
+AGE30DAYS=43200
+PURGETARGET=$AGE7DAYS
+for f in $( adrci exec="show homes" | grep -v "ADR Homes:" );
+do
+echo "Purging ${f}:";
+adrci exec="set home $f; migrate schema; purge -age $PURGETARGET -type TRACE;" ;
+adrci exec="set home $f; migrate schema; purge -age $PURGETARGET -type ALERT;" ;
+adrci exec="set home $f; migrate schema; purge -age $PURGETARGET -type INCIDENT;" ;
+adrci exec="set home $f; migrate schema; purge -age $PURGETARGET -type CDUMP;" ;
+done
+#remove all audit 2 day ago 
