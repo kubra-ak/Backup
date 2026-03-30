@@ -1,0 +1,4 @@
+****Monitoring backup***
+SELECT sid, message, sofar/totalwork*100 AS pct_done
+FROM v$session_longops
+WHERE opname LIKE 'RMAN%' AND totalwork > 0;
